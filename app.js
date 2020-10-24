@@ -5,10 +5,33 @@ var express = require("express"),
   mongoose = require("mongoose"),
   expressSanitizer = require("express-sanitizer");
 
-mongoose.connect("mongodb://localhost/restfulblog", {
+/*mongoose.connect("mongodb://localhost/restfulblog", {
   useUnifiedTopology: true, //important
   useNewUrlParser: true, //important
   useFindAndModify: false,
+});*/
+require("dotenv").config();
+
+const MongoClient = require("mongodb").MongoClient;
+const uri = process.env.MONGO_URI;
+/*const client = new MongoClient(uri, {
+  useUnifiedTopology: true, //important
+  useNewUrlParser: true, //important
+});
+client.connect((err) => {
+  const collection = client.db("test").collection("devices");
+  // perform actions on the collection object
+  client.close();
+});*/
+
+mongoose.connect(uri, {
+  useNewUrlParser: true,
+  useCreateIndex: true,
+  useUnifiedTopology: true,
+});
+const connection = mongoose.connection;
+connection.once("open", () => {
+  console.log("MongoDB database connection established successfully");
 });
 
 //app config
@@ -117,6 +140,6 @@ app.delete("/blogs/:id", function (req, res) {
   });
 });
 
-app.listen(27017, function () {
+app.listen(2000, function () {
   console.log("server running!");
 });
